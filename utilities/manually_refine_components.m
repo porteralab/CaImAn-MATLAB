@@ -36,24 +36,17 @@ if nargin < 4 || isempty(centers)
 end
     
 
-
-low_in = 0.01;
-high_in = 0.99;
-img2=img;
-color_toggle=1; %Set color toggle to change colormaps
-
 min_distance_point_selection=2;
 x=1;
 [K,T] = size(C);
 newcenters=[centers];
 % ident_point=[0,0];
 fig = figure;
-img2=imadjust(img,[low_in high_in]);
-imagesc(img2,[min(img2(:)),max(img2(:))]);
+imagesc(img,[min(img(:)),max(img(:))]);
     axis equal; axis tight; hold all;
     scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
     title('Center of ROIs found from initialization algorithm');
-    xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
+    xlabel({'Press left click to add new component, right click to remove existing component'; 'Press enter to exit'},'fontweight','bold');
     drawnow;
     cmap = colormap;
     CC = cell(size(A,2),1);
@@ -67,148 +60,13 @@ for i = 1:size(A,2)
     hold on;
 end
     
-%imcontrast(fig);
-
-
-while ~isempty(x)
-    %     scatter(ident_point(1),ident_point(2),'go');
+while ~isempty(x)    
+%     scatter(ident_point(1),ident_point(2),'go');
     [x,y,button]=ginput(1);
-    %disp(button);
-    hold on;
+    disp(button); hold on;
     if ~isempty(x)
         pixel=round([x y]);
-        %Button codes
-        %1 = left click
-        %3 = right click
-        %49 = 1 button
-        %50 = 2 button
-        %51 = 3 button
-        %52 = 4 button
-        %54 = 6 button
-        if button==50 %Raise low-end input
-            if low_in < .95 && high_in>low_in+.05
-                low_in = low_in + 0.05;
-                img2=imadjust(img,[low_in high_in]);
-                imagesc(img2,[min(img2(:)),max(img2(:))]);
-                axis equal; axis tight; hold all;
-                scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-                title('Center of ROIs found from initialization algorithm');
-                xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast'; 'Press C to change color map'; 'Press R to reset image';'Press enter to exit'},'fontweight','bold');
-     cmap = colormap;
-                for i = 1:K
-                    cont = CC{i}; %medfilt1(CC{i}')';
-                    if size(cont,2) > 1
-                        plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-                    end
-                end
-                drawnow;
-            end
-        elseif button==49 %Lower low-end input
-            if low_in > 0.05
-                low_in = low_in - 0.05;
-                img2=imadjust(img,[low_in high_in]);
-                imagesc(img2,[min(img2(:)),max(img2(:))]);
-                axis equal; axis tight; hold all;
-                scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-                title('Center of ROIs found from initialization algorithm');
-                xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
-    cmap = colormap;
-                for i = 1:K
-                    cont = CC{i}; %medfilt1(CC{i}')';
-                    if size(cont,2) > 1
-                        plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-                    end
-                end
-                drawnow;
-            end
-        elseif button==52 %Raise high-end input
-            if high_in < .95
-                high_in = high_in + 0.05;
-                img2=imadjust(img,[low_in high_in]);
-                imagesc(img2,[min(img2(:)),max(img2(:))]);
-                axis equal; axis tight; hold all;
-                scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-                title('Center of ROIs found from initialization algorithm');
-                xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
-    cmap = colormap;
-                for i = 1:K
-                    cont = CC{i}; %medfilt1(CC{i}')';
-                    if size(cont,2) > 1
-                        plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-                    end
-                end
-                drawnow;
-            end
-        elseif button==51 %Lower high-end input
-            if high_in > 0.05 && high_in>low_in+.05
-                high_in = high_in - 0.05;
-                img2=imadjust(img,[low_in high_in]);
-                imagesc(img2,[min(img2(:)),max(img2(:))]);
-                axis equal; axis tight; hold all;
-                scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-                title('Center of ROIs found from initialization algorithm');
-                xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
-                cmap = colormap;
-                for i = 1:K
-                    cont = CC{i}; %medfilt1(CC{i}')';
-                    if size(cont,2) > 1
-                        plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-                    end
-                end
-                drawnow;
-            end
-        elseif button==82||button==114 %Reset
-            low_in = .01;
-            high_in = .99;
-            img2=imadjust(img,[low_in high_in]);
-            imagesc(img2,[min(img2(:)),max(img2(:))]);
-            axis equal; axis tight; hold all;
-            scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-            title('Center of ROIs found from initialization algorithm');
-            xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
-            cmap = colormap;
-            color_toggle=1;
-            colormap default;
-            for i = 1:K
-                cont = CC{i}; %medfilt1(CC{i}')';
-                if size(cont,2) > 1
-                    plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-                end
-            end
-            drawnow;
-        
-        elseif button==67||button==99 %Change colormap color
-            
-            if color_toggle==1
-                colormap gray;
-                color_toggle=0;
-            else
-                colormap default;
-                color_toggle=1;
-            end
-            %Change Y to max projection
-%             low_in = .01;
-%             high_in = 1;
-%             img = (max(Y,[],3));
-%             img = img-min(min(min(img)));
-%             img = img/max(max(max(img)));
-%             img2=imadjust(img,[low_in high_in]);
-%             imagesc(img2,[min(img2(:)),max(img2(:))]);
-%             axis equal; axis tight; hold all;
-%             scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
-%             title('Center of ROIs found from initialization algorithm');
-%             xlabel({'Press left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset image'; 'Press enter to exit'},'fontweight','bold');
-%             
-%             for i = 1:K
-%                 cont = CC{i}; %medfilt1(CC{i}')';
-%                 if size(cont,2) > 1
-%                     plot(cont(1,2:end-1),cont(2,2:end-1),'Color',[1,0,1]/2); hold on;
-%                 end
-%             end
-            drawnow;
-            
-            
-        elseif button==1 %changed to an elseif to add button for contrast DC20190219 
+        if button==1
             disp(['Adding pixel at:' num2str(fliplr(pixel))])
             newcenters=[newcenters; fliplr(pixel)];
             int_x = round(newcenters(end,1)) + (-sx:sx);
@@ -267,12 +125,12 @@ while ~isempty(x)
                 K = K - 1;
                 % replot after removing
                 clf;
-                imagesc(img2,[min(img(:)),max(img(:))]);
+                imagesc(img,[min(img(:)),max(img(:))]);
                     axis equal; axis tight; hold all;
                     scatter(newcenters(:,2),newcenters(:,1),'mo'); hold on;
                     title('Center of ROIs found from initialization algorithm');
-                    xlabel({'Left click to add new component, right click to remove existing component';  'Use 1 key and 2 key to adjust low-end contrast'; 'Use 3 key and 4 key to adjust high-end contrast';'Press C to change color map'; 'Press R to reset';'Press enter to exit'},'fontweight','bold');
-    drawnow;
+                    xlabel({'Press left click to add new component, right click to remove existing component'; 'Press enter to exit'},'fontweight','bold');
+                    drawnow;
                     cmap = colormap;
                     
                 for i = 1:K
